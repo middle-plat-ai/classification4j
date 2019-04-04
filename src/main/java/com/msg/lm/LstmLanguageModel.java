@@ -5,6 +5,7 @@ import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.Updater;
 import org.deeplearning4j.nn.conf.layers.GravesLSTM;
+import org.deeplearning4j.nn.conf.layers.LSTM;
 import org.deeplearning4j.nn.conf.layers.RnnOutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
@@ -12,6 +13,7 @@ import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 import java.io.FileInputStream;
@@ -28,11 +30,11 @@ public class LstmLanguageModel {
         inputData = inputData.substring(0, 50000);
         String validCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"\n',.?;()[]{}:!- ";
 
-        GravesLSTM.Builder lstmBuilder = new GravesLSTM.Builder();
+        LSTM.Builder lstmBuilder = new LSTM.Builder();
         lstmBuilder.activation(Activation.TANH);
         lstmBuilder.nIn(validCharacters.length());
         lstmBuilder.nOut(30); // Hidden
-        GravesLSTM inputLayer = lstmBuilder.build();
+        LSTM inputLayer = lstmBuilder.build();
 
         RnnOutputLayer.Builder outputBuilder = new RnnOutputLayer.Builder();
         outputBuilder.lossFunction(LossFunctions.LossFunction.MSE);
@@ -43,13 +45,13 @@ public class LstmLanguageModel {
 
         NeuralNetConfiguration.Builder nnBuilder = new NeuralNetConfiguration.Builder();
         nnBuilder.optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT);
-        nnBuilder.updater(Updater.ADAM);
+        nnBuilder.updater(new Adam(0.01));
         nnBuilder.weightInit(WeightInit.XAVIER);
-        nnBuilder.learningRate(0.01);
         nnBuilder.miniBatch(true);
 
         MultiLayerNetwork network = new MultiLayerNetwork(
-                nnBuilder.list().layer(0, inputLayer)
+                nnBuilder.list()
+                        .layer(0, inputLayer)
                         .layer(1, outputLayer)
                         .backprop(true).pretrain(false)
                         .build());
