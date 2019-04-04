@@ -1,7 +1,7 @@
 package com.msg.classifier.cnn;
 
-import com.msg.classifier.util.TrainTestSplit;
-import com.msg.classifier.util.FileUtil;
+import com.msg.util.TrainTestSplit;
+import com.msg.util.FileUtil;
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.iterator.CnnSentenceDataSetIterator;
 import org.deeplearning4j.iterator.LabeledSentenceProvider;
@@ -190,6 +190,7 @@ public class CnnTextClassifier {
     }
 
     private CnnSentenceDataSetIterator.Builder buildCnnSentenceIterator() {
+
         return new CnnSentenceDataSetIterator.Builder(CnnSentenceDataSetIterator.Format.CNN2D)
                 .wordVectors(wordVectors)
                 .minibatchSize(batchSize)

@@ -1,4 +1,4 @@
-package com.msg.classifier.word2vec;
+package com.msg.embedding.word2vec;
 
 import lombok.extern.slf4j.Slf4j;
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
